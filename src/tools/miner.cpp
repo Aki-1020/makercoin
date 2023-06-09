@@ -111,6 +111,7 @@ void get_work(PublicWalletAddress wallet, HostManager& hosts, string& customHost
 
         } catch (const std::exception& e) {
             Logger::logStatus("Exception");
+            Logger::logStatus(e.what());
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }

@@ -152,7 +152,7 @@ HostManager::HostManager(json config) {
         this->hostSources.push_back(h);
     }
     if (this->hostSources.size() == 0) {
-        string localhost = "http://localhost:3000";
+        string localhost = "http://localhost:3001";
         this->hosts.push_back(localhost);
         this->hostPingTimes[localhost] = std::time(0);
         this->peerClockDeltas[localhost] = 0;

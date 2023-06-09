@@ -122,9 +122,8 @@ PublicWalletAddress walletAddressFromPublicKey(PublicKey inputKey) {
     RIPEMD160Hash hash2 = RIPEMD160((const char*)hash.data(), hash.size());
     SHA256Hash hash3 = SHA256((const char*)hash2.data(),hash2.size());
     SHA256Hash hash4 = SHA256((const char*)hash3.data(),hash3.size());
-    uint8_t checksum = hash4[0];
     PublicWalletAddress address;
-    address[0] = 0;
+    address[0] = 1;  // MakerCoin
     for(int i = 1; i <=20; i++) {
         address[i] = hash2[i-1];
     }
@@ -155,12 +154,15 @@ PublicWalletAddress stringToWalletAddress(string s) {
     vector<uint8_t> bytes = hexDecode(s);
     PublicWalletAddress ret;
     std::move(bytes.begin(), bytes.begin() + ret.size(), ret.begin());
+    if (ret[0] != 1) throw std::runtime_error("Invalid wallet address string");
+    // TODO: test checksum
     return ret;
 }
 
 string privateKeyToString(PrivateKey p) {
     return hexEncode((const char*)p.data(), p.size());
 }
+
 PrivateKey stringToPrivateKey(string p) {
     if (p.size() != 128) throw std::runtime_error("Invalid private key string");
     vector<uint8_t> bytes = hexDecode(p);
@@ -172,6 +174,7 @@ PrivateKey stringToPrivateKey(string p) {
 string publicKeyToString(PublicKey pubKey) {
     return hexEncode((const char*) pubKey.data(),pubKey.size());
 }
+
 PublicKey stringToPublicKey(string p) {
     if (p.size() != 64) throw std::runtime_error("Invalid public key string");
     vector<uint8_t> data = hexDecode(p);
@@ -200,7 +203,9 @@ TransactionSignature signWithPrivateKey(const char* bytes, size_t len, PublicKey
 string signatureToString(TransactionSignature t) {
     return hexEncode((const char*) t.data(), t.size());
 }
+
 TransactionSignature stringToSignature(string t) {
+    if (t.size() != 128) throw std::runtime_error("Invalid signature string");
     vector<uint8_t> data = hexDecode(t);
     TransactionSignature decoded;
     for(int i = 0; i < data.size(); i++) {

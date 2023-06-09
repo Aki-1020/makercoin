@@ -106,7 +106,7 @@ void BlockChain::initChain() {
 
 void BlockChain::resetChain() {
     Logger::logStatus("BlockStore does not exist");
-    this->difficulty = 16;
+    this->difficulty = MIN_DIFFICULTY;
     this->targetBlockCount = 1;
     this->numBlocks = 0;
     this->totalWork = 0;
@@ -118,38 +118,40 @@ void BlockChain::resetChain() {
     this->txdb.clear();
     
     
-    // // User miner;
-    // Transaction fee(stringToWalletAddress("006FD6A3E7EE4B6F6556502224E6C1FC7232BD449314E7A124"), PDN(50));
-    // fee.setTimestamp(0);
-    // vector<Transaction> transactions;
-    // Block genesis;
-    // genesis.setTimestamp(0);
-    // genesis.setId(1);
-    // genesis.addTransaction(fee);
-    // genesis.setLastBlockHash(NULL_SHA256_HASH);
-    // // addGenesisTransactions(genesis);
+    // User miner;
+    Transaction fee(stringToWalletAddress("0162D94CA49FD50343C5BA470F2B00F299FB1E093F4FEA58D5"), PDN(50));
+    fee.setTimestamp(0);
+    vector<Transaction> transactions;
+    Block genesis;
+    genesis.setTimestamp(0);
+    genesis.setId(1);
+    genesis.addTransaction(fee);
+    genesis.setLastBlockHash(NULL_SHA256_HASH);
+    // addGenesisTransactions(genesis);
+    // genesis.addTransaction(Transaction(NULL_ADDRESS, stringToWalletAddress("0162D94CA49FD50343C5BA470F2B00F299FB1E093F4FEA58D5"), 1, NULL_KEY, 0, 0));
 
-    // // compute merkle tree
-    // MerkleTree m;
-    // m.setItems(genesis.getTransactions());
-    // SHA256Hash computedRoot = m.getRootHash();
-    // genesis.setMerkleRoot(m.getRootHash());
+    // compute merkle tree
+    MerkleTree m;
+    m.setItems(genesis.getTransactions());
+    SHA256Hash computedRoot = m.getRootHash();
+    genesis.setMerkleRoot(m.getRootHash());
 
-    // SHA256Hash hash = genesis.getHash();
+    SHA256Hash hash = genesis.getHash();
 
-    // SHA256Hash solution = mineHash(hash, genesis.getDifficulty());
-    // genesis.setNonce(solution);
+    bool usePufferfish = genesis.getId() > PUFFERFISH_START_BLOCK;
+    SHA256Hash solution = mineHash(hash, genesis.getDifficulty(), usePufferfish);
+    genesis.setNonce(solution);
 
-    // writeJsonToFile(genesis.toJson(), "genesis.json");
+    writeJsonToFile(genesis.toJson(), "genesis.json");
 
-    json genesisJson;
-    try {
-         genesisJson = readJsonFromFile("genesis.json");
-    } catch(...) {
-        Logger::logError(RED + "[FATAL]" + RESET, "Could not load genesis.json file.");
-        exit(-1);
-    }
-    Block genesis(genesisJson);
+    // json genesisJson;
+    // try {
+    //      genesisJson = readJsonFromFile("genesis.json");
+    // } catch(...) {
+    //     Logger::logError(RED + "[FATAL]" + RESET, "Could not load genesis.json file.");
+    //     exit(-1);
+    // }
+    // Block genesis(genesisJson);
 
     ExecutionStatus status = this->addBlock(genesis);
     if (status != SUCCESS) {
@@ -197,11 +199,7 @@ uint32_t BlockChain::getBlockCount() const {
 }
 
 uint32_t BlockChain::getCurrentMiningFee(uint64_t blockId) const{
-    // NOTE:
-    // The chain was forked three times, once at 7,750 and again at 125,180, then at 18k
-    // Thus we push the chain ahead by this count.
-    // SEE: https://bitcointalk.org/index.php?topic=5372707.msg58965610#msg58965610
-    uint64_t logicalBlock = blockId + 125180 + 7750 + 18000;
+    uint64_t logicalBlock = blockId; // from previous fork
     double amount = 50.0;
     while (logicalBlock >= 666666) {
         amount *= (2.0/3.0);
@@ -209,10 +207,11 @@ uint32_t BlockChain::getCurrentMiningFee(uint64_t blockId) const{
     }
     return PDN(amount);
 }
+
 double BlockChain::getSupply() const {
   std::unique_lock<std::mutex> ul(lock);
   double supply = 0;
-  double amount_offset=6647477.8490; // from previous fork
+  double amount_offset = 0.0; // from previous fork
   double amount = 50.0;
   uint64_t blocks = numBlocks;
   while (blocks >= 666666) {
@@ -290,7 +289,7 @@ uint32_t computeDifficulty(int32_t currentDifficulty, int32_t elapsedTime, int32
 }
 
 void BlockChain::updateDifficulty() {
-    if (this->numBlocks <= DIFFICULTY_LOOKBACK*2) return;
+    if (this->numBlocks <= DIFFICULTY_LOOKBACK) return;
     if (this->numBlocks % DIFFICULTY_LOOKBACK != 0) return;
     int firstID = this->numBlocks - DIFFICULTY_LOOKBACK;
     int lastID = this->numBlocks;  
