@@ -123,7 +123,7 @@ json getConfig(int argc, char**argv) {
     config["ip"] = customIp;
     config["thread_priority"] = thread_priority;
     config["hostSources"] = hostSources;
-    config["minHostVersion"] = "0.0.1-beta";
+    config["minHostVersion"] = "0.7.13-beta";
     config["showHeaderStats"] = true;
 
     if (local) {
