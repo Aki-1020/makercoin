@@ -64,7 +64,7 @@ sudo pip3 install conan==1.59
 
 ### Building
 ```
-git clone https://github.com/pandanite-crypto/pandanite
+git clone https://github.com/Aki-1020/makercoin
 cd pandanite
 mkdir build
 cd build
@@ -106,7 +106,7 @@ To compile a simple CLI tool that lets you send PDN:
 ```
 make cli
 ```
-For a separate, interactive GUI wallet see https://github.com/pandanite-crypto/pandanite-wallet
+For a separate, interactive GUI wallet see ... soon
 
 ### Usage
 Start by generating `keys.json`.
@@ -132,64 +132,10 @@ Some server running args:
 -p (Custom Port, default is 3000)
 --testnet (Run in testnet mode, good for testing your mining setup)
 ```
-Full list of arguments can be found here: https://github.com/pandanite-crypto/pandanite/blob/master/src/core/config.cpp
+Full list of arguments can be found here: https://github.com/Aki-1020/makercoin/blob/master/src/core/config.cpp
 
-To send PDN to another address (run with --local flag if the server you want to use is listening on localhost):
+To send Coin to another address (run with --local flag if the server you want to use is listening on localhost):
 ```
 ./bin/cli
 ```
 
-### Docker
-
-Pandanite is pre-built for amd64 and arm64 with [GitHub Actions](https://github.com/pandanite-crypto/pandanite/actions) and distributed with the [GitHub Container Registry](https://github.com/pandanite-crypto/pandanite/pkgs/container/pandanite)
-
-#### Running with Docker
-
-with `docker`
-
-```shell
-docker run -d --name pandanite -p 3000:3000 -v $(pwd)/pandanite-data:/pandanite/data ghcr.io/pandanite-crypto/pandanite:latest server
-docker logs -f pandanite
-```
-
-You can follow the progress of server sync from `http://localhost:3000`
-
-Running with `docker-compose` is recommended to easily add more options like cpu usage limits and a health checks:
-
-```yaml
-version: '3.4'
-
-services:
-  pandanite:
-    image: ghcr.io/pandanite-crypto/pandanite:latest
-    command: server
-    ports:
-      - 3000:3000
-    volumes:
-      - ./pandanite-data:/pandanite/data
-    restart: unless-stopped
-    cpus: 8
-    healthcheck:
-      test: ["CMD", "curl", "-sf", "http://127.0.0.1:3000"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
-```
-
-#### Building with docker
-
-Clone this repository and then
-
-```shell
-docker build . -t pandanite
-docker run [OPTIONS] pandanite server
-```
-
-Running CI build locally
-```shell
-docker run --privileged --rm tonistiigi/binfmt --install all
-docker buildx create --use
-
-GITHUB_REPOSITORY=NeedsSomeValue GITHUB_SHA=NeedsSomeValue docker buildx bake --progress=plain
-```

@@ -17,14 +17,14 @@ json getConfig(int argc, char**argv) {
     std::vector<std::string> args(argv, argv + argc);  
     // should read from config when available
     std::vector<string>::iterator it;
-    bool testnet = true;
+    bool testnet = false;
     bool local = false;
     bool rateLimiter = true;
     bool firewall = false;
     string customWallet = "";
     string customIp = "";
     string customName = randomString(25);
-    string networkName = "testnet";
+    string networkName = "mainnet";
     json hostSources = json::array();
     json checkpoints = json::array();
     json bannedHashes = json::array();
@@ -75,13 +75,6 @@ json getConfig(int argc, char**argv) {
     it = std::find(args.begin(), args.end(), "--host-source");
     if (it++ != args.end()) {
         hostSources.push_back(string(*it));
-    }
-
-    it = std::find(args.begin(), args.end(), "--mainnet");
-    if (it != args.end()) {
-        networkName = "mainnet";
-        local = false;
-        testnet = false;
     }
 
     it = std::find(args.begin(), args.end(), "--testnet");
@@ -136,9 +129,9 @@ json getConfig(int argc, char**argv) {
     if (local) {
         // do nothing
     } else if (testnet) {
-        config["hostSources"].push_back("http://212.147.106.225:3001/peers");
-    } else {
         config["hostSources"].push_back("http://212.147.106.225:3002/peers");
+    } else {
+        config["hostSources"].push_back("http://212.147.106.225:3001/peers");
     }
     return config;
 }
