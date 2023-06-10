@@ -132,6 +132,7 @@ json getConfig(int argc, char**argv) {
         config["hostSources"].push_back("http://212.147.106.225:3002/peers");
     } else {
         config["hostSources"].push_back("http://212.147.106.225:3001/peers");
+        config["hostSources"].push_back("http://212.147.52.216:3001/peers");
     }
     return config;
 }
