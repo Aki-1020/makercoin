@@ -8,9 +8,9 @@ Pandanite fork.
 ### Circulation
 This coin is minted by miners who earn rewards. Mining payments occur using the *thwothirding* algorithm, which yields a total final circulation of ~99.1M:
 
-- 50 Coin per block at Heights 1 to 515736
-- 50\*(2/3) Coin per block from blocks 515737 to 515736+666666
-- 50\*(2/3)^2 Coin per block from blocks 515736+666667 to 515736+2\*666666
+- 50 Coin per block at Heights 1 to 666666-1
+- 50\*(2/3) Coin per block from blocks 666666 to 2\*666666-1
+- 50\*(2/3)^2 Coin per block from blocks 2\*666666 to 3\*666666-1
 
 etc.
 #### Comparison with halving
