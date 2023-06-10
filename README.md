@@ -133,4 +133,15 @@ To send Coin to another address (run with --local flag if the server you want to
 ```
 ./bin/cli
 ```
+### Mining
+Le miner a encore des bugs...
+Pour le démarrer sur la même machine que le node:
+```
+mkdir miner
+cd miner
+mkdir data
+../bin/keygen
+../bin/miner --local
+```
+
 
