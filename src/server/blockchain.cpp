@@ -119,7 +119,7 @@ void BlockChain::resetChain() {
     
     
     // User miner;
-    Transaction fee(stringToWalletAddress("0162D94CA49FD50343C5BA470F2B00F299FB1E093F4FEA58D5"), PDN(50));
+    Transaction fee(stringToWalletAddress("01DE22ECAB984024FC47930BCF29BE5F41AF6A0F29480031F3"), PDN(50));
     fee.setTimestamp(0);
     vector<Transaction> transactions;
     Block genesis;

@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <execinfo.h>
 #include <filesystem>
+#include <cstdio>
 #include "../core/logger.hpp"
 #include "../core/crypto.hpp"
 #include "../core/host_manager.hpp"
@@ -81,6 +82,7 @@ void Server::run(json config) {
 
     
     Logger::logStatus("Starting Server Version: ");
+    Logger::logStatus(BUILD_VERSION);
     HostManager hosts(config);
 
     

@@ -152,6 +152,7 @@ HostManager::HostManager(json config) {
         this->hostSources.push_back(h);
     }
     if (this->hostSources.size() == 0) {
+        Logger::logStatus("Add host http://localhost:3001");
         string localhost = "http://localhost:3001";
         this->hosts.push_back(localhost);
         this->hostPingTimes[localhost] = std::time(0);
@@ -434,7 +435,7 @@ void HostManager::refreshHostList() {
                 try {
                     json hostInfo = getName(hostUrl);
                     if (hostInfo["version"] < hm.minHostVersion) {
-                        Logger::logStatus(RED + "[ UNREACHABLE ] " + RESET  + hostUrl);
+                        Logger::logStatus(RED + "[ UNREACHABLE ] version " + RESET  + hostUrl);
                         return;
                     }
                     std::unique_lock<std::mutex> ul(lock);

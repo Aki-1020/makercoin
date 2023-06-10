@@ -60,7 +60,7 @@ sudo pip3 install conan==1.59
 ### Building
 ```
 git clone https://github.com/Aki-1020/makercoin
-cd pandanite
+cd makercoin
 mkdir build
 cd build
 conan install .. --build=missing
